@@ -1,4 +1,4 @@
-import { thoughts } from './mockData';
+import { thoughts } from './mockData.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export function getAllThoughts() {

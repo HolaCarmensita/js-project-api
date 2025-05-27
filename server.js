@@ -1,6 +1,6 @@
 import cors from 'cors';
 import express from 'express';
-const expressListEndpoints = require('express-list-endpoints');
+import expressListEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
 
 // Ladda in .env-filen
