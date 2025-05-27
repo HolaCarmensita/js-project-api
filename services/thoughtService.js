@@ -41,6 +41,25 @@ export function decrementLike(id) {
   return foundThought;
 }
 
-export function updateThought(id, updatedThought) {}
+export function updateThought(id, updatedThought) {
+  const thought = thoughts.find((thought) => thought._id === String(id));
+  if (!thought) return null;
 
-export function removeThought(id) {}
+  if (updatedThought.message) {
+    thought.message = updatedThought.message;
+  }
+
+  thought.__v += 1;
+
+  return thought;
+}
+
+export function removeThought(id) {
+  const index = thoughts.findIndex((thought) => thought._id === String(id));
+
+  if (index === -1) return false;
+
+  thoughts.splice(index, 1);
+
+  return true;
+}
