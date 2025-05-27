@@ -1,22 +1,49 @@
-import cors from "cors"
-import express from "express"
+import cors from 'cors';
+import express from 'express';
+const expressListEndpoints = require('express-list-endpoints');
+import dotenv from 'dotenv';
 
-// Defines the port the app will run on. Defaults to 8080, but can be overridden
-// when starting the server. Example command to overwrite PORT env variable value:
-// PORT=9000 npm start
-const port = process.env.PORT || 8080
-const app = express()
+// Ladda in .env-filen
+dotenv.config();
+const port = process.env.PORT || 8080;
 
-// Add middlewares to enable cors and json body parsing
-app.use(cors())
-app.use(express.json())
+// Skapa en Express-app
+const app = express();
 
-// Start defining your routes here
-app.get("/", (req, res) => {
-  res.send("Hello Technigo!")
-})
+// Middleware
+app.use(cors()); // Aktivera CORS
+app.use(express.json()); // Aktivera JSON-parsing
 
-// Start the server
+// 1) Dina vanliga routes
+app.get('/', (req, res) => {
+  const endpoints = expressListEndpoints(app);
+  res.json(endpoints);
+});
+// Exempel på fler routes
+app.post('/thoughts', (req, res) => {
+  // ... lägg till ny todo
+});
+app.get('/thoughts', (req, res) => {
+  // ... returnera alla todos
+});
+app.get('/thoughts/:id', (req, res) => {
+  // ... returnera todo med id
+});
+
+// Hantera 404
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not Found' });
+});
+
+//Felhantering
+app.use((err, req, res, next) => {
+  console.error('💥 Server Error:', err);
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal Server Error',
+  });
+});
+
+// Starta servern
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`)
-})
+  console.log(`Server running on http://localhost:${port}`);
+});
