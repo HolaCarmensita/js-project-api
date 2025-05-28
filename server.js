@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import expressListEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
+import happyRouter from './routes/happyThoughts.js';
 
 // Ladda in .env-filen
 dotenv.config();
@@ -14,21 +15,15 @@ const app = express();
 app.use(cors()); // Aktivera CORS
 app.use(express.json()); // Aktivera JSON-parsing
 
-// 1) Dina vanliga routes
-app.get('/', (req, res) => {
+// Rot-endpoint: lista alla endpoints requriement
+function ListEndpointsHandler(req, res) {
   const endpoints = expressListEndpoints(app);
   res.json(endpoints);
-});
-// Exempel på fler routes
-app.post('/thoughts', (req, res) => {
-  // ... lägg till ny todo
-});
-app.get('/thoughts', (req, res) => {
-  // ... returnera alla todos
-});
-app.get('/thoughts/:id', (req, res) => {
-  // ... returnera todo med id
-});
+}
+app.get('/', ListEndpointsHandler);
+
+//HappyRouter montering
+app.use('/api/thoughts', happyRouter);
 
 // Hantera 404
 app.use((req, res) => {
