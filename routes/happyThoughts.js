@@ -8,28 +8,31 @@ import {
   updateThought,
   removeThought,
 } from '../services/thoughtService.js';
-import { findByPrefix, paginate } from '../services/untils';
+import { findByPrefix, paginate, sortItems } from '../services/untils';
 
 const happyRouter = express.Router();
 
 function listAllThoughtsHandler(req, res) {
-  const requestedPage = Number(req.query.page) || 1;
-  const allThoughts = getAllThoughts();
+  let allThoughts = getAllThoughts();
 
-  // Paginerings‐util returnerar page, perPage, total, totalPages och results
+  // Om klienten begär sortering, anropa utils direkt med både fält och råparam
+  if (req.query.sortBy) {
+    allThoughts = sortItems(allThoughts, req.query.sortBy, req.query.sortDir);
+  }
+
   const { page, perPage, total, totalPages, results } = paginate(
     allThoughts,
-    requestedPage,
-    10
+    req.query.page,
+    req.query.perPage
   );
-
-  // Skicka tillbaka metadata och själva sidan med tankar
   res.json({
-    page, // aktuell sida (1-baserad)
-    perPage, // antal items per sida (10)
-    total, // totalt antal tankar
-    totalPages, // hur många sidor som finns
-    results, // array med tankar för just den här sidan
+    page,
+    perPage,
+    total,
+    totalPages,
+    sortBy: req.query.sortBy || null,
+    sortDir: req.query.sortDir === 'ascending' ? 'ascending' : 'descending',
+    results,
   });
 }
 

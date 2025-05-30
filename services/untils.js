@@ -1,6 +1,6 @@
 //Made from ChatGPT
 
-// Hittar första ID som delar prefix med targetId.
+// Hittar suggested id att använda vid felaktigt id
 export function findByPrefix(targetId, allIds, prefixLength = 4) {
   // Ta de första prefixLength tecknen från det inskickade ID:t
   const prefix = targetId.slice(0, prefixLength);
@@ -10,24 +10,38 @@ export function findByPrefix(targetId, allIds, prefixLength = 4) {
 }
 
 // Paginerar en array genom att returnera både metadata och de paginerade resultaten.
-export function paginate(items, page = 1, perPage = 10) {
-  // Räkna totalt antal items
+export function paginate(items, pageParam = 1, perPageParam = 10) {
+  // 1) Tolka parametrarna till tal (default 1 och 10)
+  const requestedPage = Number(pageParam) || 1;
+  const perPage = Number(perPageParam) || 10;
+
+  // 2) Totalt antal items
   const total = items.length;
-  // Beräkna hur många sidor det blir totalt
+  // 3) Totalt antal sidor (rundar alltid upp)
   const totalPages = Math.ceil(total / perPage);
-  // Säkerställ att sidan är mellan 1 och totalPages
-  const safePage = Math.min(Math.max(1, page), totalPages);
-  // Beräkna startindex för slice
+  // 4) Säker sida inom spannet [1, totalPages]
+  const safePage = Math.min(Math.max(1, pageParam), totalPages);
+  // 5) Beräkna startindex och skär ut resultat
   const start = (safePage - 1) * perPage;
-  // Skapa den delmängd av items som tillhör den här sidan
   const results = items.slice(start, start + perPage);
 
-  // Returnera objekt med både sidmetadata och resultaten
-  return {
-    page: safePage,
-    perPage,
-    total,
-    totalPages,
-    results,
-  };
+  // 6) Returnera metadata + resultat
+  return { pageParam, perPage, total, totalPages, results };
+}
+
+export function sortItems(items, key, directionParam) {
+  // Bestäm riktning: om directionParam === 'ascending' → 'ascending', annars 'descending'
+  const direction = directionParam === 'ascending' ? 'ascending' : 'descending';
+  const dir = direction === 'ascending' ? 1 : -1;
+
+  // Gör en kopia så vi inte muterar originalet
+  const arr = [...items];
+
+  arr.sort((a, b) => {
+    if (a[key] < b[key]) return -1 * dir;
+    if (a[key] > b[key]) return 1 * dir;
+    return 0;
+  });
+
+  return arr;
 }
