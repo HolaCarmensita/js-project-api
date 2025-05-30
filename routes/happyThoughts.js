@@ -7,8 +7,8 @@ import {
   decrementLike,
   updateThought,
   removeThought,
-  deleteThought,
 } from '../services/thoughtService.js';
+import { findByPrefix } from '../services/untils';
 
 const happyRouter = express.Router();
 
@@ -21,7 +21,16 @@ function getOneThoughtHandler(req, res) {
   const { id } = req.params;
   const thought = getOneThought(id);
   if (!thought) {
-    return res.status(404).json({ error: 'Thought not found' });
+    const allIds = getAllThoughts().map((t) => t._id);
+    const suggestion = findByPrefix(id, allIds, 4);
+
+    return res.status(404).json({
+      error: 'Thought not found',
+      requestedId: id,
+      suggestion: suggestion
+        ? `Did you mean ${suggestion}?`
+        : 'Could not find a suggested ID',
+    });
   }
   return res.json(thought);
 }
@@ -78,6 +87,7 @@ function removeThoughtHandler(req, res) {
 
   return res.json({
     message: `Thought: ${removedThought.message}, removed successfully`,
+    removedThought: removedThought,
   });
 }
 
@@ -85,8 +95,8 @@ function removeThoughtHandler(req, res) {
 happyRouter.get('/', listAllThoughtsHandler);
 happyRouter.get('/:id', getOneThoughtHandler);
 happyRouter.post('/', addThoughtHandler);
-happyRouter.post('/:id/like', likeThoughtHandler);
-happyRouter.patch('/:id/unlike', unLikeThoughtHandler);
+happyRouter.post('/:id/likes', likeThoughtHandler);
+happyRouter.delete('/:id/likes', unLikeThoughtHandler);
 happyRouter.put('/:id', updatedThoughtHandler);
 happyRouter.delete('/:id', removeThoughtHandler);
 
