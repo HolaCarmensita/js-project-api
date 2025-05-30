@@ -1,11 +1,13 @@
 import express from 'express';
 import {
   getAllThoughts,
+  getOneThought,
   addThought,
   incrementLike,
   decrementLike,
   updateThought,
   removeThought,
+  deleteThought,
 } from '../services/thoughtService.js';
 
 const happyRouter = express.Router();
@@ -13,6 +15,15 @@ const happyRouter = express.Router();
 function listAllThoughtsHandler(req, res) {
   const allThoughts = getAllThoughts();
   res.json(allThoughts);
+}
+
+function getOneThoughtHandler(req, res) {
+  const { id } = req.params;
+  const thought = getOneThought(id);
+  if (!thought) {
+    return res.status(404).json({ error: 'Thought not found' });
+  }
+  return res.json(thought);
 }
 
 function addThoughtHandler(req, res) {
@@ -44,10 +55,39 @@ function unLikeThoughtHandler(req, res) {
   return res.json(unLike);
 }
 
+function updatedThoughtHandler(req, res) {
+  const { id } = req.params;
+  const updatedThought = req.body;
+
+  const updated = updateThought(id, updatedThought);
+
+  if (!updated) {
+    return res.status(404).json({ error: 'Thought not found' });
+  }
+
+  return res.json(updated);
+}
+
+function removeThoughtHandler(req, res) {
+  const { id } = req.params;
+  const removedThought = removeThought(id);
+
+  if (!removedThought) {
+    return res.status(404).json({ error: 'Thought not found' });
+  }
+
+  return res.json({
+    message: `Thought: ${removedThought.message}, removed successfully`,
+  });
+}
+
 //KOMIHÅG ATT URL börjar med /api/thoughts
 happyRouter.get('/', listAllThoughtsHandler);
+happyRouter.get('/:id', getOneThoughtHandler);
 happyRouter.post('/', addThoughtHandler);
 happyRouter.post('/:id/like', likeThoughtHandler);
 happyRouter.patch('/:id/unlike', unLikeThoughtHandler);
+happyRouter.put('/:id', updatedThoughtHandler);
+happyRouter.delete('/:id', removeThoughtHandler);
 
 export default happyRouter;

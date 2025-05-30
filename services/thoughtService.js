@@ -19,6 +19,15 @@ export function addThought({ message }) {
   return newThought;
 }
 
+export function getOneThought(id) {
+  if (!id) return null;
+
+  const thought = thoughts.find((thought) => thought._id === String(id));
+  if (!thought) return null;
+
+  return thought;
+}
+
 export function incrementLike(id) {
   const foundThought = thoughts.find((thought) => thought._id === String(id));
   //if the thought is not found, return null
@@ -55,11 +64,10 @@ export function updateThought(id, updatedThought) {
 }
 
 export function removeThought(id) {
-  const index = thoughts.findIndex((thought) => thought._id === String(id));
+  const index = thoughts.findIndex((t) => t._id === String(id));
+  if (index === -1) return null;
 
-  if (index === -1) return false;
-
-  thoughts.splice(index, 1);
-
-  return true;
+  // Ta ut objektet från arrayen
+  const [removed] = thoughts.splice(index, 1);
+  return removed; // returnera det borttagna objektet
 }
