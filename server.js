@@ -4,15 +4,9 @@ import expressListEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
 import happyRouter from './routes/happyThoughts.js';
 import mongoose from 'mongoose';
-import { Thought } from './models/Thought.js';
 
 // Ladda in .env-filen
 dotenv.config();
-
-//Mongoose setup
-const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/happyThoughts';
-mongoose.connect(mongoUrl);
-mongoose.connection.on('connected', () => console.log('MongoDB connected'));
 
 const port = process.env.PORT || 8080;
 
