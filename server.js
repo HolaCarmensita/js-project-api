@@ -8,6 +8,11 @@ import mongoose from 'mongoose';
 // Ladda in .env-filen
 dotenv.config();
 
+const mongoUrl =
+  process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/happyThoughts';
+mongoose.connect(mongoUrl);
+mongoose.connection.on('connected', () => console.log('Connected to MongoDB'));
+
 const port = process.env.PORT || 8080;
 
 // Skapa en Express-app
