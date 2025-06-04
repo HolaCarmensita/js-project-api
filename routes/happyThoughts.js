@@ -5,7 +5,7 @@ import {
   addThought,
   likeThought,
   unLikeThought,
-  // updateThought,
+  updateThought,
   // removeThought,
 } from '../controllers/thoughtController.js';
 
@@ -17,7 +17,7 @@ happyRouter.get('/:id', getOneThought);
 happyRouter.post('/', addThought);
 happyRouter.post('/:id/likes', likeThought);
 happyRouter.delete('/:id/likes', unLikeThought);
-// happyRouter.put('/:id', updateThought);
+happyRouter.put('/:id', updateThought);
 // happyRouter.delete('/:id', removeThought);
 
 export default happyRouter;

@@ -99,18 +99,29 @@ export const unLikeThought = async (req, res) => {
   }
 };
 
-// function updatedThoughtHandler(req, res) {
-//   const { id } = req.params;
-//   const updatedThought = req.body;
+export const updateThought = async (req, res) => {
+  const { id } = req.params;
+  const { message } = req.body;
 
-//   const updated = updateThought(id, updatedThought);
+  try {
+    const thought = await Thought.findById(id);
 
-//   if (!updated) {
-//     return res.status(404).json({ error: 'Thought not found' });
-//   }
+    if (!thought) {
+      return res.status(404).json({ error: 'Thought not found' });
+    }
 
-//   return res.json(updated);
-// }
+    thought.message = message;
+    await thought.save(); // kör validering och sparar ändringarna
+
+    res.json(thought);
+  } catch (error) {
+    console.error('Mongoose error on updateThought:', error);
+    res.status(400).json({
+      error: 'Invalid input or ID format',
+      message: error.message,
+    });
+  }
+};
 
 // function removeThoughtHandler(req, res) {
 //   const { id } = req.params;
