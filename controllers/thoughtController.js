@@ -123,16 +123,27 @@ export const updateThought = async (req, res) => {
   }
 };
 
-// function removeThoughtHandler(req, res) {
-//   const { id } = req.params;
-//   const removedThought = removeThought(id);
+export const removeThought = async (req, res) => {
+  const { id } = req.params;
 
-//   if (!removedThought) {
-//     return res.status(404).json({ error: 'Thought not found' });
-//   }
+  try {
+    const thought = await Thought.findById(id);
 
-//   return res.json({
-//     message: `Thought: ${removedThought.message}, removed successfully`,
-//     removedThought: removedThought,
-//   });
-// }
+    if (!thought) {
+      return res.status(404).json({ error: 'Thought not found' });
+    }
+
+    await thought.deleteOne(); // eller await Thought.findByIdAndDelete(id);
+
+    res.json({
+      message: `Thought: "${thought.message}" removed successfully`,
+      removedThought: thought,
+    });
+  } catch (error) {
+    console.error('Mongoose error on removeThought:', error);
+    res.status(400).json({
+      error: 'Invalid ID format or other error',
+      message: error.message,
+    });
+  }
+};

@@ -6,7 +6,7 @@ import {
   likeThought,
   unLikeThought,
   updateThought,
-  // removeThought,
+  removeThought,
 } from '../controllers/thoughtController.js';
 
 const happyRouter = express.Router();
@@ -18,6 +18,6 @@ happyRouter.post('/', addThought);
 happyRouter.post('/:id/likes', likeThought);
 happyRouter.delete('/:id/likes', unLikeThought);
 happyRouter.put('/:id', updateThought);
-// happyRouter.delete('/:id', removeThought);
+happyRouter.delete('/:id', removeThought);
 
 export default happyRouter;
