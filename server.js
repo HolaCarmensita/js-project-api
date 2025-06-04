@@ -4,6 +4,8 @@ import expressListEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
 import happyRouter from './routes/happyThoughts.js';
 import mongoose from 'mongoose';
+import data from './data.json';
+import { Thought } from './models/Thoughts.js';
 
 // Ladda in .env-filen
 dotenv.config();
@@ -15,6 +17,18 @@ mongoose.connect(mongoUrl);
 mongoose.connection.on('connected', () => console.log('Connected to MongoDB'));
 
 const port = process.env.PORT || 8080;
+
+// const seedDatabase = async () => {
+//   try {
+//     await Thought.deleteMany(); // Rensa tidigare innehåll
+//     await Thought.insertMany(data); // in med nya tankar
+//     console.log('Database seeded with thoughts!');
+//   } catch (error) {
+//     console.error('Error seeding database:', error);
+//   }
+// };
+
+// seedDatabase();
 
 // Skapa en Express-app
 const app = express();
