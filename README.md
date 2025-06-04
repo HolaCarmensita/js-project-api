@@ -1,11 +1,39 @@
-# Project API
+# 🧠 Projekt: Happy Thoughts API – Startguide
 
-This project includes the packages and babel setup for an express server, and is just meant to make things a little simpler to get up and running with.
+## ✅ Terminalkommandon att köra när du öppnar projektet
 
-## Getting started
+1. Navigera till projektmappen:
 
-Install dependencies with `npm install`, then start the server by running `npm run dev`
+```bash
+cd ~/Documents/Technigo/js-project-api
+```
+
+2. Installera dependencies (endast första gången eller efter nytt paket):
+
+```bash
+npm install
+```
+
+3. Starta MongoDB-tjänsten via Homebrew (om den inte redan är igång):
+
+```bash
+brew services start mongodb/brew/mongodb-community
+```
+
+4. Kontrollera att MongoDB körs:
+
+```bash
+brew services list
+```
+
+→ Du ska se: `mongodb-community started`
+
+5. Starta din backend-server:
+
+```bash
+npm run dev
 
 ## View it live
 
 [Hola-Happy-Server](https://hola-happy-server.onrender.com)
+```

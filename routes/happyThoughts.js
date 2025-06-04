@@ -1,23 +1,23 @@
 import express from 'express';
 import {
   listAllThoughts,
-  getOneThought,
-  addThought,
-  likeThought,
-  unLikeThought,
-  updateThought,
-  removeThought,
+  // getOneThought,
+  // addThought,
+  // likeThought,
+  // unLikeThought,
+  // updateThought,
+  // removeThought,
 } from '../controllers/thoughtController.js';
 
 const happyRouter = express.Router();
 
 //KOMIHÅG ATT URL börjar med /api/thoughts
-happyRouter.get('/', listAllThoughtsHandler);
-happyRouter.get('/:id', getOneThoughtHandler);
-happyRouter.post('/', addThoughtHandler);
-happyRouter.post('/:id/likes', likeThoughtHandler);
-happyRouter.delete('/:id/likes', unLikeThoughtHandler);
-happyRouter.put('/:id', updatedThoughtHandler);
-happyRouter.delete('/:id', removeThoughtHandler);
+happyRouter.get('/', listAllThoughts);
+// happyRouter.get('/:id', getOneThought);
+// happyRouter.post('/', addThought);
+// happyRouter.post('/:id/likes', likeThought);
+// happyRouter.delete('/:id/likes', unLikeThought);
+// happyRouter.put('/:id', updateThought);
+// happyRouter.delete('/:id', removeThought);
 
 export default happyRouter;
