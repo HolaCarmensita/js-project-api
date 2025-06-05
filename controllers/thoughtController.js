@@ -127,17 +127,15 @@ export const removeThought = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const thought = await Thought.findById(id);
+    const removedThought = await Thought.findByIdAndDelete(id);
 
-    if (!thought) {
+    if (!removedThought) {
       return res.status(404).json({ error: 'Thought not found' });
     }
 
-    await thought.deleteOne(); // eller await Thought.findByIdAndDelete(id);
-
     res.json({
-      message: `Thought: "${thought.message}" removed successfully`,
-      removedThought: thought,
+      message: `Thought: "${removedThought.message}" removed successfully`,
+      removedThought,
     });
   } catch (error) {
     console.error('Mongoose error on removeThought:', error);
