@@ -2,17 +2,31 @@ import express from 'express';
 import { Thought } from '../models/Thoughts';
 
 export const listAllThoughts = async (req, res) => {
+  const sortBy = req.query.sortBy || 'createdAt';
+  const sortDir = req.query.sortDir === 'ascending' ? 1 : -1;
+
+  const page = Math.max(Number(req.query.page) || 1, 1); // min = 1
+  const rawLimit = Number(req.query.limit) || 10;
+  const limit = Math.min(Math.max(rawLimit, 1), 100); // mellan 1 och 100
+  const skip = (page - 1) * limit;
+
   try {
-    const sortBy = req.query.sortBy || 'createdAt';
-    const sortDir = req.query.sortDir === 'ascending' ? 1 : -1;
+    const totalCount = await Thought.countDocuments();
 
     const thoughts = await Thought.find()
-      .sort({ [sortBy]: sortDir }) // <– dynamisk sortering
-      .limit(20);
+      .sort({ [sortBy]: sortDir })
+      .skip(skip)
+      .limit(limit);
 
-    res.json(thoughts);
+    res.json({
+      page,
+      limit,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      results: thoughts,
+    });
   } catch (error) {
-    console.error('Mongoose error:', error);
+    console.error('Mongoose error on listAllThoughts:', error);
     res.status(500).json({ error: 'Could not fetch thoughts from database' });
   }
 };
