@@ -71,7 +71,7 @@ export const likeThought = async (req, res) => {
   try {
     const updatedThought = await Thought.findByIdAndUpdate(
       id,
-      { $inc: { hearts: 1 } }, // 💥 Mongoose "increment"
+      { $inc: { likes: 1 } }, // 💥 Mongoose "increment"
       { new: true } // returnera det uppdaterade dokumentet
     );
 
@@ -100,8 +100,8 @@ export const unLikeThought = async (req, res) => {
         .json({ error: 'Thought not found, could not unlike' });
     }
 
-    if (thought.hearts > 0) {
-      thought.hearts -= 1;
+    if (thought.likes > 0) {
+      thought.likes -= 1;
       await thought.save();
     }
 
