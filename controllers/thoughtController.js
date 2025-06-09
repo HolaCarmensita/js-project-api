@@ -1,4 +1,3 @@
-import express from 'express';
 import { Thought } from '../models/Thoughts';
 
 export const listAllThoughts = async (req, res) => {
