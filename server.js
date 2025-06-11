@@ -13,10 +13,18 @@ dotenv.config();
 //moongoose
 const mongoUrl =
   process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/happyThoughts';
-mongoose.connect(mongoUrl);
-mongoose.connection.on('connected', () =>
-  console.log('Connected to MongoDB Atlas')
-);
+mongoose
+  .connect(mongoUrl)
+  .then(() => {
+    console.log('Connected to MongoDB Atlas');
+  })
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+  });
+
+mongoose.connection.on('error', (error) => {
+  console.error('MongoDB connection error:', error);
+});
 
 const port = process.env.PORT || 8080;
 

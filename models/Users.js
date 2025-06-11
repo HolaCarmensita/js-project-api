@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 
-const User = mongoose.model('User', {
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -16,7 +16,7 @@ const User = mongoose.model('User', {
   },
   accessToken: {
     type: String,
-    default: crypto.randomBytes(64).toString('hex'),
+    default: () => crypto.randomBytes(64).toString('hex'),
   },
   thoughts: [
     {
@@ -25,5 +25,7 @@ const User = mongoose.model('User', {
     },
   ],
 });
+
+const User = mongoose.model('User', userSchema);
 
 export default User;

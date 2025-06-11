@@ -15,6 +15,11 @@ const thoughtSchema = new mongoose.Schema({
     type: Date,
     default: () => new Date(), // ger dagens datum
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
 
 export const Thought = mongoose.model('Thought', thoughtSchema);

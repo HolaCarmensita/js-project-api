@@ -51,8 +51,21 @@ export const getOneThought = async (req, res) => {
 
 export const addThought = async (req, res) => {
   const { message } = req.body;
+
+  // Validate message length
+  if (!message || message.length < 5 || message.length > 140) {
+    return res.status(400).json({
+      error: 'Message is required and must be between 5 and 140 characters',
+    });
+  }
+
   try {
-    const newThought = await Thought.create({ message });
+    const newThought = await Thought.create({
+      message,
+      createdBy: req.user._id,
+      // likes and createdAt will be set by defaults in the model
+    });
+
     res.status(201).json(newThought);
   } catch (error) {
     console.error('Mongoose error on addThought:', error);

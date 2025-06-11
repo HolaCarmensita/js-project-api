@@ -1,16 +1,21 @@
-import User from '../models/User.js';
+import User from '../models/Users.js';
 
-const authenticateUser = async (req, res, next) => {
-  const accessToken = req.header('Authorization');
+export const authenticateUser = async (req, res, next) => {
+  const authHeader = req.header('Authorization');
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing or invalid token' });
+  }
+
+  const accessToken = authHeader.replace('Bearer ', '');
 
   try {
     const user = await User.findOne({ accessToken });
 
     if (!user) {
-      return res.status(401).json({ error: 'Please log in' });
+      return res.status(401).json({ error: 'Invalid token' });
     }
 
-    // Allt ok – lägg användaren i request-objektet
     req.user = user;
     next();
   } catch (err) {
