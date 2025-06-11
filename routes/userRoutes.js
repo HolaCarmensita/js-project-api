@@ -39,4 +39,35 @@ userRoutes.post('/signup', async (req, res) => {
   }
 });
 
+userRoutes.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Leta upp användaren
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Jämför lösenord
+    const passwordMatch = bcrypt.compareSync(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Om allt ok! Skicka tillbaka accessToken
+    res.status(200).json({
+      email: user.email,
+      accessToken: user.accessToken,
+      id: user._id,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: 'Internal server error', details: err.message });
+  }
+});
+
 export default userRoutes;
