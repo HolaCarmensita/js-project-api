@@ -2,16 +2,17 @@ import cors from 'cors';
 import express from 'express';
 import expressListEndpoints from 'express-list-endpoints';
 import dotenv from 'dotenv';
-import happyRouter from './routes/happyThoughts.js';
 import mongoose from 'mongoose';
-import data from './data.json';
-import { Thought } from './models/Thoughts.js';
+
+import happyRouter from './routes/happyThoughtsRouter.js';
+import userRoutes from './routes/userRoutes.js';
 
 // Ladda in .env-filen
 dotenv.config();
 
 //moongoose
-const mongoUrl = process.env.MONGO_URL; // || 'mongodb://127.0.0.1:27017/happyThoughts';
+const mongoUrl =
+  process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/happyThoughts';
 mongoose.connect(mongoUrl);
 mongoose.connection.on('connected', () =>
   console.log('Connected to MongoDB Atlas')
@@ -35,6 +36,7 @@ app.get('/', ListEndpointsHandler);
 
 //HappyRouter montering
 app.use('/api/thoughts', happyRouter);
+app.use('/', userRoutes);
 
 // Hantera 404
 app.use((req, res) => {

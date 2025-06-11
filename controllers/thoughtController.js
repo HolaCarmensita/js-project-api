@@ -1,4 +1,4 @@
-import { Thought } from '../models/Thoughts';
+import { Thought } from '../models/Thoughts.js';
 
 export const listAllThoughts = async (req, res) => {
   const sortBy = req.query.sortBy || 'createdAt';
