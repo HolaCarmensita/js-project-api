@@ -11,24 +11,13 @@ import { Thought } from './models/Thoughts.js';
 dotenv.config();
 
 //moongoose
-const mongoUrl =
-  process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/happyThoughts';
+const mongoUrl = process.env.MONGO_URL; // || 'mongodb://127.0.0.1:27017/happyThoughts';
 mongoose.connect(mongoUrl);
-mongoose.connection.on('connected', () => console.log('Connected to MongoDB'));
+mongoose.connection.on('connected', () =>
+  console.log('Connected to MongoDB Atlas')
+);
 
 const port = process.env.PORT || 8080;
-
-// const seedDatabase = async () => {
-//   try {
-//     await Thought.deleteMany(); // Rensa tidigare innehåll
-//     await Thought.insertMany(data); // in med nya tankar
-//     console.log('Database seeded with thoughts!');
-//   } catch (error) {
-//     console.error('Error seeding database:', error);
-//   }
-// };
-
-// seedDatabase();
 
 // Skapa en Express-app
 const app = express();
