@@ -136,16 +136,21 @@ export const updateThought = async (req, res) => {
       return res.status(404).json({ error: 'Thought not found' });
     }
 
-    thought.message = message;
-    await thought.save(); // kör validering och sparar ändringarna
+    // Kontrollera att den inloggade användaren äger tanken
+    if (thought.createdBy.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ error: 'You are not allowed to update this thought' });
+    }
 
-    res.json(thought);
-  } catch (error) {
-    console.error('Mongoose error on updateThought:', error);
-    res.status(400).json({
-      error: 'Invalid input or ID format',
-      message: error.message,
-    });
+    thought.message = message;
+    const updatedThought = await thought.save();
+
+    res.status(200).json(updatedThought);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: 'Could not update thought', details: err.message });
   }
 };
 
@@ -153,21 +158,23 @@ export const removeThought = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const removedThought = await Thought.findByIdAndDelete(id);
+    const thought = await Thought.findById(id);
 
-    if (!removedThought) {
+    if (!thought) {
       return res.status(404).json({ error: 'Thought not found' });
     }
 
-    res.json({
-      message: `Thought: "${removedThought.message}" removed successfully`,
-      removedThought,
-    });
-  } catch (error) {
-    console.error('Mongoose error on removeThought:', error);
-    res.status(400).json({
-      error: 'Invalid ID format or other error',
-      message: error.message,
-    });
+    if (thought.createdBy.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ error: 'You are not allowed to delete this thought' });
+    }
+
+    await thought.deleteOne();
+    res.status(200).json({ message: 'Thought deleted successfully' });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: 'Could not delete thought', details: err.message });
   }
 };
