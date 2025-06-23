@@ -19,7 +19,7 @@ happyRouter.get('/:id', getOneThought);
 happyRouter.post('/', authenticateUser, addThought);
 happyRouter.post('/:id/likes', likeThought);
 happyRouter.delete('/:id/likes', unLikeThought);
-happyRouter.put('/:id', updateThought);
-happyRouter.delete('/:id', removeThought);
+happyRouter.put('/:id', authenticateUser, updateThought);
+happyRouter.delete('/:id', authenticateUser, removeThought);
 
 export default happyRouter;

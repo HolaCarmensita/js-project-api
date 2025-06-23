@@ -1,4 +1,5 @@
 import { Thought } from '../models/Thoughts.js';
+import mongoose from 'mongoose';
 
 export const listAllThoughts = async (req, res) => {
   const sortBy = req.query.sortBy || 'createdAt';
@@ -158,6 +159,11 @@ export const removeThought = async (req, res) => {
   const { id } = req.params;
 
   try {
+    // Validate if the ID is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid thought ID format' });
+    }
+
     const thought = await Thought.findById(id);
 
     if (!thought) {
