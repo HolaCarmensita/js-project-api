@@ -82,47 +82,50 @@ export const addThought = async (req, res) => {
 
 export const likeThought = async (req, res) => {
   const { id } = req.params;
-  try {
-    const updatedThought = await Thought.findByIdAndUpdate(
-      id,
-      { $inc: { likes: 1 } }, // 💥 Mongoose "increment"
-      { new: true } // returnera det uppdaterade dokumentet
-    );
-
-    if (!updatedThought) {
-      return res
-        .status(404)
-        .json({ error: 'Thought not found, could not add your like' });
-    }
-
-    res.json(updatedThought);
-  } catch (error) {
-    console.error('Mongoose error on likeThought:', error);
-    res.status(400).json({ error: 'Invalid ID format or other error' });
-  }
-};
-
-export const unLikeThought = async (req, res) => {
-  const { id } = req.params;
+  const userId = req.user?._id;
 
   try {
     const thought = await Thought.findById(id);
 
     if (!thought) {
-      return res
-        .status(404)
-        .json({ error: 'Thought not found, could not unlike' });
+      return res.status(404).json({ error: 'Thought not found' });
     }
 
-    if (thought.likes > 0) {
-      thought.likes -= 1;
-      await thought.save();
+    if (userId) {
+      const userIdStr = userId.toString();
+      // Convert likedBy to array of strings for logic
+      let likedByStrArr = thought.likedBy.map((id) => id.toString());
+      console.log('Before toggle:', { userIdStr, likedBy: likedByStrArr });
+      const hasLiked = likedByStrArr.includes(userIdStr);
+
+      if (hasLiked) {
+        likedByStrArr = likedByStrArr.filter((id) => id !== userIdStr);
+        console.log('User unliked. After removal:', likedByStrArr);
+      } else {
+        likedByStrArr.push(userIdStr);
+        console.log('User liked. After addition:', likedByStrArr);
+      }
+      thought.likes = likedByStrArr.length;
+      console.log('Final likedBy and likes:', {
+        likedBy: likedByStrArr,
+        likes: thought.likes,
+      });
+      // Convert likedBy back to ObjectIds before saving
+      thought.likedBy = likedByStrArr.map(
+        (id) => new mongoose.Types.ObjectId(id)
+      );
+
+      const updatedThought = await thought.save();
+      return res.status(200).json(updatedThought);
     }
 
-    res.json(thought);
+    // Guests should not be able to like
+    return res.status(401).json({ error: 'Authentication required to like' });
   } catch (error) {
-    console.error('Mongoose error on unLikeThought:', error);
-    res.status(400).json({ error: 'Invalid ID format or other error' });
+    console.error('Error in likeThought:', error);
+    res
+      .status(500)
+      .json({ error: 'Could not toggle like', details: error.message });
   }
 };
 

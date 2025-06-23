@@ -11,6 +11,12 @@ const thoughtSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  likedBy: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
   createdAt: {
     type: Date,
     default: () => new Date(), // ger dagens datum
@@ -18,7 +24,7 @@ const thoughtSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    required: false,
   },
 });
 
