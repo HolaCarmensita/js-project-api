@@ -5,26 +5,11 @@ export const listAllThoughts = async (req, res) => {
   const sortBy = req.query.sortBy || 'createdAt';
   const sortDir = req.query.sortDir === 'ascending' ? 1 : -1;
 
-  const page = Math.max(Number(req.query.page) || 1, 1); // min = 1
-  const rawLimit = Number(req.query.limit) || 10;
-  const limit = Math.min(Math.max(rawLimit, 1), 100); // mellan 1 och 100
-  const skip = (page - 1) * limit;
-
   try {
-    const totalCount = await Thought.countDocuments();
-
     const thoughts = await Thought.find()
       .sort({ [sortBy]: sortDir })
-      .skip(skip)
-      .limit(limit);
-
-    res.json({
-      page,
-      limit,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      results: thoughts,
-    });
+      .populate('createdBy', '_id email');
+    res.json(thoughts);
   } catch (error) {
     console.error('Mongoose error on listAllThoughts:', error);
     res.status(500).json({ error: 'Could not fetch thoughts from database' });
@@ -35,7 +20,7 @@ export const getOneThought = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const thought = await Thought.findById(id);
+    let thought = await Thought.findById(id);
 
     if (!thought) {
       return res.status(404).json({
@@ -43,6 +28,7 @@ export const getOneThought = async (req, res) => {
         requestedId: id,
       });
     }
+    thought = await thought.populate('createdBy', '_id email');
     res.json(thought);
   } catch (error) {
     console.error('Mongoose error on getOneThought:', error);
@@ -54,7 +40,7 @@ export const addThought = async (req, res) => {
   const { message } = req.body;
 
   // Validate message length
-  if (!message || message.length < 5 || message.length > 140) {
+  if (!message || message.length < 4 || message.length > 140) {
     return res.status(400).json({
       error: 'Message is required and must be between 5 and 140 characters',
     });
@@ -67,7 +53,11 @@ export const addThought = async (req, res) => {
       // likes and createdAt will be set by defaults in the model
     });
 
-    res.status(201).json(newThought);
+    const populatedThought = await newThought.populate(
+      'createdBy',
+      '_id email'
+    );
+    res.status(201).json(populatedThought);
   } catch (error) {
     console.error('Mongoose error on addThought:', error);
     if (error.name === 'ValidationError') {
@@ -116,7 +106,11 @@ export const likeThought = async (req, res) => {
       );
 
       const updatedThought = await thought.save();
-      return res.status(200).json(updatedThought);
+      const populatedThought = await updatedThought.populate(
+        'createdBy',
+        '_id email'
+      );
+      return res.status(200).json(populatedThought);
     }
 
     // Guests should not be able to like
@@ -149,8 +143,11 @@ export const updateThought = async (req, res) => {
 
     thought.message = message;
     const updatedThought = await thought.save();
-
-    res.status(200).json(updatedThought);
+    const populatedThought = await updatedThought.populate(
+      'createdBy',
+      '_id email'
+    );
+    res.status(200).json(populatedThought);
   } catch (err) {
     res
       .status(500)
