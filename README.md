@@ -1,12 +1,6 @@
 # 🧠 Projekt: Happy Thoughts API – Startguide
 
-## ✅ Terminalkommandon att köra när du öppnar projektet
-
-1. Navigera till projektmappen:
-
-```bash
-cd ~/Documents/Technigo/js-project-api
-```
+1. clone project
 
 2. Installera dependencies (endast första gången eller efter nytt paket):
 
