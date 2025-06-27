@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Project API",
   "scripts": {
-    "build": "npx babel server.js --out-dir dist",
+    "build": "npx babel server.js controllers models middlewares routes --out-dir dist",
     "start": "node dist/server.js",
     "dev": "nodemon server.js --exec babel-node",
     "test:service": "babel-node testService.js"
